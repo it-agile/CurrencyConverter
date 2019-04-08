@@ -1,56 +1,76 @@
 package de.itagile;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
 
-import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+import static de.itagile.Money.Amount.amount;
+import static org.junit.Assert.assertEquals;
 
 public class CurrencyCalcTest {
 
-	public CurrencyCalc cc;
-	private Currency oneEuro = new Currency("EUR", 1.0);
-	
-	@Before 
-	public void setup() {
-		cc = new CurrencyCalc(
-				new CurrencyImporterStatic(),
-				new CurrencyParserVeryBasicImpl());
-	}
+    private static Money money(Currency eur, double amount) {
+        return Money.money(eur, amount(amount));
+    }
 
-	@Test
-	public void testConvertEuroToDollar() {
-		assertThat(cc.convertEUR(oneEuro, "USD"), equalTo(new Currency("USD", 1.126)));
-	}
+    private static void addExchangeRateFromTo(Map<CurrencyRelation, Money.Amount> exchangeRate, Currency from, Currency to, double amount) {
+        exchangeRate.put(fromCurrencyToCurrency(from, to), amount(amount));
+    }
 
-	@Test
-	public void testConvertEuroToReal() {
-		assertThat(cc.convertEUR(oneEuro, "BRL"), equalTo(new Currency("BRL", 4.1852)));
-	}
+    private static CurrencyRelation fromCurrencyToCurrency(Currency from, Currency to) {
+        return new CurrencyRelation(from, to);
+    }
 
-	@Test
-	public void testConvertMoreEuroToReal() {
-		Currency twoEuro = new Currency("EUR", 2.0);
-		assertThat(cc.convertEUR(twoEuro, "BRL"), equalTo(new Currency("BRL", 8.3704)));
-	}
+    @Test
+    public void convertsCurrencies() {
+        Map<CurrencyRelation, Money.Amount> exchangeRates = new HashMap<>();
+        addExchangeRateFromTo(exchangeRates, Currency.EUR, Currency.EUR, 1.0);
+        addExchangeRateFromTo(exchangeRates, Currency.EUR, Currency.DKK, 7.0);
+        addExchangeRateFromTo(exchangeRates, Currency.DKK, Currency.EUR, 1.0 / 7.0);
+        addExchangeRateFromTo(exchangeRates, Currency.DKK, Currency.DKK, 1.0);
 
-	@Test
-	public void testConvertIgnoreFromCurrency() {
-		Currency oneUnknown = new Currency("Unknown", 1.0);
-		assertThat(cc.convertEUR(oneUnknown, "USD"), equalTo(new Currency("USD", 1.126)));
-	}
+        ConversionRateRetriever retriever =
+                () -> (ExchangeRates) (ausgangswaehrung, zielwaehrung)
+                        -> exchangeRates.get(fromCurrencyToCurrency(ausgangswaehrung, zielwaehrung));
 
-	@Test
-	public void testCurrencies() {
-		assertThat(cc.supportedCurrencyCodes(),hasItem("USD"));
-		assertThat(cc.supportedCurrencyCodes(),hasItem("BRL"));
-	}
+        CurrencyConverter currencyConverter = new CurrencyConverter(retriever);
 
-	@Test(expected = NumberFormatException.class)
-	public void testConvertUnknown() {
-		cc.convertEUR(oneEuro, "An unknown Currency");
-	}
+        assertEquals(money(Currency.EUR, 1.0 / 7.0),
+                currencyConverter.convert(Currency.EUR, money(Currency.DKK, 1)));
+        assertEquals(money(Currency.EUR, 2.0 / 7.0),
+                currencyConverter.convert(Currency.EUR, money(Currency.DKK, 2)));
+        assertEquals(money(Currency.EUR, 1),
+                currencyConverter.convert(Currency.EUR, money(Currency.EUR, 1)));
+        assertEquals(money(Currency.DKK, 1),
+                currencyConverter.convert(Currency.DKK, money(Currency.DKK, 1)));
+    }
 
+    private static class CurrencyRelation {
+
+        private final Currency from;
+        private final Currency to;
+
+        private CurrencyRelation(Currency from, Currency to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof CurrencyRelation)) return false;
+            CurrencyRelation that = (CurrencyRelation) o;
+            return from == that.from &&
+                    to == that.to;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(from, to);
+        }
+
+    }
 
 }
