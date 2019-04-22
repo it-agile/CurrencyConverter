@@ -10,9 +10,13 @@ public class CurrencyImporterWeb implements CurrencyImporter {
     @Override
     public String loadCurrencies() {
 
+        return loadCurrencies("latest");
+    }
+
+    public String loadCurrencies(String date) {
         String content = "";
         try {
-            URL url = new URL("https://api.exchangeratesapi.io/latest");
+            URL url = new URL("https://api.exchangeratesapi.io/" + date);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
