@@ -1,8 +1,6 @@
 # Created by .gitignore support plugin (hsz.mobi)
 .DS_Store
 ### Leiningen template
-pom.xml
-pom.xml.asc
 *jar
 /bin/
 /lib/
