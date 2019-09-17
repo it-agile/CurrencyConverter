@@ -1,9 +1,15 @@
 package de.itagile;
 
 import cucumber.api.java.en.Given;
-import cucumber.api.java.en.When;
 import cucumber.api.java.en.Then;
-import static org.junit.Assert.*;
+import cucumber.api.java.en.When;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import static org.junit.Assert.assertEquals;
 
 public class Stepdefs {
     private String from;
@@ -17,6 +23,7 @@ public class Stepdefs {
     public void date(String date) {
         this.date = date;
     }
+
     @Given("^the transaction fee is (\\d+)%$")
     public void transactionFee(int fee) {
         this.fee = fee;
@@ -39,5 +46,23 @@ public class Stepdefs {
                 amount,
                 currencyConverter.convertWithFeeFromEurTo(this.to, this.amount, this.date, this.fee),
                 0.01);
+    }
+
+    @Then("^The amount I receive via web is (\\d+\\.?\\d*)$")
+    public void receiveViaWeb(double amount) {
+        try {
+            var content = "";
+            URL url = new URL("http://localhost:7000/" + to +"/" + this.amount + "/" + date);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                content += inputLine;
+            }
+            in.close();
+            assertEquals(""+amount, content);
+        } catch (Exception e) {
+        }
     }
 }
