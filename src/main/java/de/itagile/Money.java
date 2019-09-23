@@ -1,41 +1,39 @@
 package de.itagile;
 
-import java.util.Objects;
+public class Money<MyCurrency extends Currency> {
 
-public class Money {
+    private final Decimal amount;
+    private MyCurrency currency;
 
-    private final Amount amount;
-    private Currency currency;
-
-    private Money(Currency zielwaehrung, Amount amount) {
+    private Money(MyCurrency zielwaehrung, Decimal amount) {
         this.currency = zielwaehrung;
         this.amount = amount;
     }
 
-    static Money money(Currency zielwaehrung, Amount amount) {
-        return new Money(zielwaehrung, amount);
+    static <DestCurrency extends Currency> Money<DestCurrency> money(Decimal amount, DestCurrency zielwaehrung) {
+        return new Money<>(zielwaehrung, amount);
     }
 
-    Currency getCurrency() {
+    MyCurrency getCurrency() {
         return currency;
-    }
-
-    Amount getAmount() {
-        return amount;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Money)) return false;
-        Money money = (Money) o;
-        return currency == money.currency &&
-                amount.equals(money.amount);
+
+        Money<?> money = (Money<?>) o;
+
+        if (!amount.equals(money.amount)) return false;
+        return currency.equals(money.currency);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(currency, amount);
+        int result = amount.hashCode();
+        result = 31 * result + currency.hashCode();
+        return result;
     }
 
     @Override
@@ -46,39 +44,9 @@ public class Money {
                 '}';
     }
 
-    final static class Amount {
-        private final double amount;
-
-        private Amount(double amount) {
-            this.amount = amount;
-        }
-
-        static Amount amount(double amount) {
-            return new Amount(amount);
-        }
-
-        Amount multiply(Amount amount) {
-            return amount(this.amount * amount.amount);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Amount)) return false;
-            Amount amount1 = (Amount) o;
-            return Double.compare(amount1.amount, amount) == 0;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(amount);
-        }
-
-        @Override
-        public String toString() {
-            return "Amount{" +
-                    "amount=" + amount +
-                    '}';
-        }
+    public <DestCurrency extends Currency> Money<DestCurrency> change(ExchangeRate<MyCurrency, DestCurrency> exchangeRate) {
+        return money(this.amount.multiply(exchangeRate.getRate()), exchangeRate.getDestCurrency()
+        );
     }
+
 }

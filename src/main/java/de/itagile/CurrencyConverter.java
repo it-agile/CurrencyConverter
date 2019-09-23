@@ -1,18 +1,15 @@
 package de.itagile;
 
-import static de.itagile.Money.money;
-
 class CurrencyConverter {
-    private ExchangeRates exchangeRates;
+    private ExchangeRateService exchangeRateService;
 
     CurrencyConverter(ConversionRateRetriever retriever) {
-        this.exchangeRates = retriever.retrieve();
+        this.exchangeRateService = retriever.retrieve();
     }
 
-    Money convert(Currency zielwaehrung, Money money) {
-        return money(zielwaehrung,
-                money.getAmount().multiply(
-                        exchangeRates.getExchangeRate(money.getCurrency(), zielwaehrung)));
+    <DestCurrency extends Currency>
+    Money<DestCurrency> convert(Money<Eur> money, DestCurrency destCurrency) {
+        return money.change(exchangeRateService.getExchangeRate(money.getCurrency(), destCurrency));
     }
 
 }

@@ -1,6 +1,5 @@
 package de.itagile;
 
-public enum Currency {
-    EUR,
-    DKK
+public interface Currency {
+    CurrencyName getName();
 }

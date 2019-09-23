@@ -2,75 +2,38 @@ package de.itagile;
 
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import static de.itagile.Money.Amount.amount;
+import static de.itagile.Currencies.DKK;
+import static de.itagile.Currencies.EUR;
+import static de.itagile.Decimal.create;
+import static de.itagile.Money.money;
 import static org.junit.Assert.assertEquals;
 
 public class CurrencyCalcTest {
 
-    private static Money money(Currency eur, double amount) {
-        return Money.money(eur, amount(amount));
-    }
-
-    private static void addExchangeRateFromTo(Map<CurrencyRelation, Money.Amount> exchangeRate, Currency from, Currency to, double amount) {
-        exchangeRate.put(fromCurrencyToCurrency(from, to), amount(amount));
-    }
-
-    private static CurrencyRelation fromCurrencyToCurrency(Currency from, Currency to) {
-        return new CurrencyRelation(from, to);
-    }
-
     @Test
     public void convertsCurrencies() {
-        Map<CurrencyRelation, Money.Amount> exchangeRates = new HashMap<>();
-        addExchangeRateFromTo(exchangeRates, Currency.EUR, Currency.EUR, 1.0);
-        addExchangeRateFromTo(exchangeRates, Currency.EUR, Currency.DKK, 7.0);
-        addExchangeRateFromTo(exchangeRates, Currency.DKK, Currency.EUR, 1.0 / 7.0);
-        addExchangeRateFromTo(exchangeRates, Currency.DKK, Currency.DKK, 1.0);
+        // given
+        ConversionRateRetriever retriever = conversionRateFor1EurIs(7, DKK);
 
-        ConversionRateRetriever retriever =
-                () -> (ExchangeRates) (ausgangswaehrung, zielwaehrung)
-                        -> exchangeRates.get(fromCurrencyToCurrency(ausgangswaehrung, zielwaehrung));
-
+        // when
         CurrencyConverter currencyConverter = new CurrencyConverter(retriever);
 
-        assertEquals(money(Currency.EUR, 1.0 / 7.0),
-                currencyConverter.convert(Currency.EUR, money(Currency.DKK, 1)));
-        assertEquals(money(Currency.EUR, 2.0 / 7.0),
-                currencyConverter.convert(Currency.EUR, money(Currency.DKK, 2)));
-        assertEquals(money(Currency.EUR, 1),
-                currencyConverter.convert(Currency.EUR, money(Currency.EUR, 1)));
-        assertEquals(money(Currency.DKK, 1),
-                currencyConverter.convert(Currency.DKK, money(Currency.DKK, 1)));
+        // then
+        assertEquals(money(create(7), DKK),
+                currencyConverter.convert(
+                        money(create(1), EUR),
+                        DKK));
     }
 
-    private static class CurrencyRelation {
-
-        private final Currency from;
-        private final Currency to;
-
-        private CurrencyRelation(Currency from, Currency to) {
-            this.from = from;
-            this.to = to;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof CurrencyRelation)) return false;
-            CurrencyRelation that = (CurrencyRelation) o;
-            return from == that.from &&
-                    to == that.to;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(from, to);
-        }
-
+    private ConversionRateRetriever conversionRateFor1EurIs(final double amount, final Currency currency) {
+        return () -> new ExchangeRateService() {
+            @Override
+            public <DestCurrency extends Currency> ExchangeRate<Eur, DestCurrency> getExchangeRate(Eur srcCurrency, DestCurrency destCurrency) {
+                if (destCurrency.equals(currency)) {
+                    return new EurExchangeRate<>(destCurrency, create(amount));
+                }
+                return new EurExchangeRate<>(destCurrency, create(1));
+            }
+        };
     }
-
 }
