@@ -10,4 +10,9 @@ public final class Eur implements Currency {
     public CurrencyName getName() {
         return CurrencyName.EUR;
     }
+
+    @Override
+    public String toString() {
+        return "EUR";
+    }
 }

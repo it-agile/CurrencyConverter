@@ -17,7 +17,7 @@ public class WebServer {
 
     public static void start(int port) {
         app = Javalin.create().start(port);
-        app.get("/", ctx -> ctx.result("Hello World!!!!"));
+        app.get("/", ctx -> ctx.redirect("/USD/100/2019-01-01"));
         app.get("/:to/:money/:date", ctx -> {
             var to = CurrencyName.valueOf(ctx.pathParam("to"));
             var money = paramToMoney(ctx, "money");

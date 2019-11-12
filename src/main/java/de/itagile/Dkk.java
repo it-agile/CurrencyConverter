@@ -10,4 +10,9 @@ public final class Dkk implements Currency {
     public CurrencyName getName() {
         return CurrencyName.DKK;
     }
+
+    @Override
+    public String toString() {
+        return "DKK";
+    }
 }
