@@ -1,0 +1,6 @@
+* Als Wechselstube möchte ich Gebühren erheben
+* Als Kunde möchte ich von Euro in eine beliebige Währung wechseln
+* Als Kunde möchte ich jede beliebige Währung wechseln
+* Als Kunde möchte ich eine Saldoprognose erhalten:
+** Wenn ich zum Datum X gekauft habe und heute verkaufe, was ist mein Saldo nach Gebührenabzug?
+* Als Kunde möchte ich mit Zukunftsdaten arbeiten
