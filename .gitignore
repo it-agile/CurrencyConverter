@@ -19,11 +19,6 @@ build
 src/target
 classes/*
 
-src/main/java/de/otto/nav/meisson
-src/test/java/de/otto/nav/meisson
-src/main/java/de/otto/nav/dreson
-src/test/java/de/otto/nav/dreson
-
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
@@ -92,3 +87,8 @@ npm-*
 package-lock.json
 resources/public/
 coverage
+
+# eclipse
+.settings/
+.project
+.classpath
