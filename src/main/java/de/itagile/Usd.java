@@ -1,14 +1,14 @@
 package de.itagile;
 
-public final class Dkk implements Currency {
-    public static final Dkk INSTANCE = new Dkk();
+public final class Usd implements Currency {
+    public static final Usd INSTANCE = new Usd();
 
-    private Dkk() {
+    private Usd() {
     }
 
     @Override
     public CurrencyName getName() {
-        return CurrencyName.DKK;
+        return CurrencyName.USD;
     }
 
     @Override
