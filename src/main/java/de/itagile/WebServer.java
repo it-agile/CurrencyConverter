@@ -20,10 +20,10 @@ public class WebServer {
         app = Javalin.create().start(port);
         app.get("/", ctx -> ctx.redirect("/USD/100/2019-01-01"));
         app.get("/:to/:money/:date", ctx -> {
-            var to = CurrencyName.valueOf(ctx.pathParam("to"));
-            var money = paramToMoney(ctx, "money");
-            var date = ctx.pathParam("date");
-            var converter = new CurrencyConverter(new HttpConversionRateRetriever(date));
+            CurrencyName to = CurrencyName.valueOf(ctx.pathParam("to"));
+            Money<Eur> money = paramToMoney(ctx, "money");
+            String date = ctx.pathParam("date");
+            CurrencyConverter converter = new CurrencyConverter(new HttpConversionRateRetriever(date));
 
             ctx.result("" + converter.convert(money, create(to)));
         });

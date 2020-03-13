@@ -50,7 +50,7 @@ public class Stepdefs {
         try {
             int port = counter.addAndGet(1);
             WebServer.start(port);
-            var content = "";
+            String content = "";
             URL url = new URL("http://localhost:" + port + "/" + to + "/" + this.amount + "/" + date);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
