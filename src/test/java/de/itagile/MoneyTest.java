@@ -18,4 +18,5 @@ public class MoneyTest {
                 twoEur.change(createEurExchangeRate(DKK, create(7))));
     }
 
+    
 }
