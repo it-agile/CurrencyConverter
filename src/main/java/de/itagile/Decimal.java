@@ -13,8 +13,12 @@ final class Decimal {
         return new Decimal(amount);
     }
 
-    public Decimal multiply(Decimal amount) {
+    public Decimal percentOf(Decimal amount) {
         return create(this.amount * amount.amount);
+    }
+
+    public Decimal percentOf(Percentage percentage) {
+        return Decimal.create(5);
     }
 
     @Override

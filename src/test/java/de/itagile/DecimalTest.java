@@ -8,6 +8,7 @@ public class DecimalTest {
 
     @Test
     public void multiplyWithPercent() {
-       assertEquals(new Decimal(100.0).multiply(new Percent(5)),5);
+       assertEquals(Decimal.create(5),
+               Decimal.create(100.0).percentOf(new Percentage(Decimal.create(5))));
     }
 }

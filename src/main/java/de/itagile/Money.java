@@ -45,7 +45,7 @@ public class Money<MyCurrency extends Currency> {
     }
 
     public <DestCurrency extends Currency> Money<DestCurrency> change(ExchangeRate<MyCurrency, DestCurrency> exchangeRate) {
-        return money(this.amount.multiply(exchangeRate.getRate()),
+        return money(this.amount.percentOf(exchangeRate.getRate()),
                 exchangeRate.getDestCurrency());
     }
 
