@@ -13,6 +13,6 @@ public final class Dkk implements Currency {
 
     @Override
     public String toString() {
-        return "DKK";
+        return getName().name();
     }
 }

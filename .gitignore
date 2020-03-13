@@ -88,3 +88,8 @@ npm-*
 package-lock.json
 resources/public/
 coverage
+
+# eclipse
+.settings/
+.project
+.classpath

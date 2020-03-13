@@ -13,6 +13,6 @@ public final class Usd implements Currency {
 
     @Override
     public String toString() {
-        return "USD";
+        return getName().name();
     }
 }

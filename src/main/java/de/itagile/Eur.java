@@ -13,6 +13,6 @@ public final class Eur implements Currency {
 
     @Override
     public String toString() {
-        return "EUR";
+        return getName().name();
     }
 }

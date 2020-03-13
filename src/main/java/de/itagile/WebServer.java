@@ -4,7 +4,8 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 
-import static de.itagile.Currencies.*;
+import static de.itagile.Currencies.EUR;
+import static de.itagile.Currencies.create;
 import static de.itagile.Money.money;
 
 public class WebServer {
