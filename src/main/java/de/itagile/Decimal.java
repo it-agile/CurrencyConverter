@@ -40,5 +40,4 @@ final class Decimal {
                 "amount=" + amount +
                 '}';
     }
-    
 }
