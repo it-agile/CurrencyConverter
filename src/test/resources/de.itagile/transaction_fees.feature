@@ -8,6 +8,7 @@ Feature: Transaction Fees
     When I change it to DKK
     Then The amount I receive is 746.73
 
+@ignore
   Scenario: One has to transaction fees from EUR to DKK otherwise
     Given the date is 2019-01-01
     And the transaction fee is 10%
